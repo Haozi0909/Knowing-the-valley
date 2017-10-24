@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<select name="" id="s1">
+    <option value="1">1.</option>
+    <option value="2">2.</option>
+    <option value="3">3.</option>
+    <option value="4">4.</option>
+</select>
+<select name="" id="s2">
+
+</select>
+
+</body>
+</html>
+<script src="../js/lib/jquery-2.1.4.js"></script>
+<script>
+    $("#s1").on("change",function(){
+        var v = $(this).val();
+        console.log(v);
+        $.ajax({
+            url:"/api/category/child",
+            type:"get",
+            data:{cg_id:v},
+            success:function(res){
+
+                console.log(res);
+
+                //数据都在res.result数组中
+                //-->遍历数组中的元素，拼接出一个个option标签，最后把这个整体作为第二个下拉框的内容
+                var str="";
+
+                res.result.forEach(function(e){
+                    str+="<option value='"+e.cg_id+"'>"+e.cg_name+"</option>";
+                });
+
+                //把str作为第二个下拉框的内容
+                $("#s2").html(str);     //切记不能使用append，因为apend是追加
+
+            }
+        })
+    })
+
+</script>

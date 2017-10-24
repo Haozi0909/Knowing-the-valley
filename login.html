@@ -39,6 +39,7 @@
 </body>
 </html>
 <script src="js/lib/jquery-2.1.4.js"></script>
+<script src="js/lib/jquery.cookie.js"></script>
 <script>
     //每一次进行表单提交的时候，都会触发表单的submit事件
     $("form").on("submit",function(e){
@@ -66,7 +67,10 @@
                     //转换 JOSN.stringify()
                     var resJosn = JSON.stringify(RES);
                     //把转好的数据设置储存起来
-                    sessionStorage.setItem("userInfo",resJosn);
+
+                    $.cookie("userInfo",resJosn,{
+                        expires:1/24       //(这里是1天的24分之一，也就是1小时有效期)
+                    });   //  相当于sessionStorage.setItem("userInfo",resJosn);
 
 
                     //跳转到首页

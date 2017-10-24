@@ -10,17 +10,20 @@ require.config({
         jquery: "lib/jquery-2.1.4",
         bootstrap: "../assets/bootstrap/js/bootstrap",
         //arttemplate模板引擎
-        art:"lib/template-web",
+        art: "lib/template-web",
         //requirejs官方提供的加载html文件的插件
-        text:"lib/text",
+        text: "lib/text",
 
         //配置一些模板文件的路径（tpls文件夹是存放模板文件的）
         tpls: "../tpls",
 
         //配置日期控件的2个文件路径
-        datetime:"../assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker",
-        datetimeLang:"../assets/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN"
-
+        datetime: "../assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker",
+        datetimeLang: "../assets/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN",
+        //配置jQuery.cookie插件路径
+        cookie: "lib/jquery.cookie",
+        //配置上传文件插件
+        upload:"../assets/uploadify/jquery.uploadify"
     },
 
     //配置模块依赖
@@ -31,8 +34,13 @@ require.config({
         },
 
         //语言包依赖于日期主包
-        datetimeLang:{
-            deps:["datetime"]
+        datetimeLang: {
+            deps: ["datetime"]
+        },
+
+        //上传包依赖于jquery
+        upload:{
+            deps:["jquery"]
         }
     }
 
@@ -42,24 +50,20 @@ require.config({
 require([
     "jquery",
     "teacher/list",
+    "category/list",
+    "common/checkLogin",
+    "common/logOut",
+    "course/list",
     "bootstrap",
     "datetime",
-    "datetimeLang"
-], function ($,teacherList) {
+    "datetimeLang",
+    "cookie",
+    "upload"
+], function ($, teacherList, categoryList, checkLogin, logOut,courseList) {
 
-    //获取用户登录信息
-    var userMessage = sessionStorage.getItem("userInfo");
+    //获取并保持登录时传过来的数据
+    checkLogin();
 
-    //如果获取不到数据，默认没有登录过，就跳转到登录页面登录才能访问
-    if(!userMessage)  return location.href="login.html";
-
-    var userInfo=JSON.parse(userMessage);
-
-    //console.log(userInfo);
-
-    //将数据放到页面中
-    $('.leftTop img').attr("src",userInfo.tc_avatar);
-    $('.leftTop .text-username').text(userInfo.tc_name);
 
     //1.实现菜单切换
     $('.list-group').on('click', 'a', function () {
@@ -74,7 +78,8 @@ require([
                 break;
 
             case "course":
-                $(".main").html("课程管理");
+                //$(".main").html("课程管理");
+                courseList();
                 break;
 
             case "addcourse":
@@ -82,7 +87,8 @@ require([
                 break;
 
             case "category":
-                $(".main").html("课程分类");
+                //$(".main").html("课程分类");
+                categoryList();
                 break;
 
             case "chart":
@@ -97,5 +103,9 @@ require([
 
     //设置默认点击到固定的一个菜单内容
     $('.list-group a[v=teacher]').trigger('click');
+
+    //退出登录模块
+    logOut();
+
 
 });
